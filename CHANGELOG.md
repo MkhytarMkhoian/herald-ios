@@ -6,3 +6,6 @@ _Unreleased_
 
  * New: `HeraldCore`: events and properties with typed values, the five capabilities, the factory
    chain and the `Herald` fan-out.
+ * New: `HeraldLog`, which prints every call in the same format as the Android and Flutter SDKs.
+ * New: `HeraldTesting`, with `FakeAnalyticsProvider` and its assertions, for Swift Testing and
+   XCTest alike.
