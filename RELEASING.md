@@ -27,6 +27,9 @@ to redeploy the website with the new samples and change log.
         -destination "id=$(scripts/simulator.sh)"
     ```
 
+    In each vendor repository, run `scripts/check-api.sh` too, with Xcode 27. CI runs it only in
+    `herald-ios`, because CI's Xcode 26 can't read vendor SDKs that ship as binaries.
+
     If a repository has an `api-breakage-allowlist.txt`, check that each break in it has a
     `Breaking:` line in the change log, then delete the file: the new release is what the next
     changes are compared with.

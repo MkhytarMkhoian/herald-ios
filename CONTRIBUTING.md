@@ -63,8 +63,9 @@ Dependencies → Add Local.
   in step.
 - **Tests** with Swift Testing, named in plain words, such as `aFailingVendorIsReported`.
 - **No accidental breaking changes.** `scripts/check-api.sh` compares the public API with the
-  latest release, in CI too, in every repository. When a break is intended, copy the line it
-  reports, the text after 💔, into `api-breakage-allowlist.txt`, and add a `Breaking:` line to the
-  change log.
+  latest release. CI runs it in this repository. In the vendor repositories, run it yourself with
+  Xcode 27: CI's Xcode 26 can't read vendor SDKs that ship as binaries. When a break is intended,
+  copy the line it reports, the text after 💔, into `api-breakage-allowlist.txt`, and add a
+  `Breaking:` line to the change log.
 - **A line in `CHANGELOG.md`** under the next, unreleased version, starting with `New:`, `Fix:`,
   `Upgrade:` or `Breaking:`.
