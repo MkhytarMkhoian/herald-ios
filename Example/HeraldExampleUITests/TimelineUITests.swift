@@ -11,11 +11,8 @@ final class TimelineUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
 
         XCTAssertEqual(
-            timeline(of: app, lines: 5),
-            [
-                "screen home", "screen product  product_id=week_pass", "screen home",
-                "consent false", "start",
-            ])
+            screenViews(in: app, count: 3),
+            ["screen home", "screen product  product_id=week_pass", "screen home"])
     }
 
     @MainActor
@@ -27,14 +24,15 @@ final class TimelineUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
 
         XCTAssertEqual(
-            timeline(of: app, lines: 5),
-            ["screen home", "screen settings", "screen home", "consent false", "start"])
+            screenViews(in: app, count: 3), ["screen home", "screen settings", "screen home"])
     }
 
-    /// The timeline's lines, newest first, once it has `count` of them.
+    /// The timeline's screen views, newest first, once it has `count` of them. Other lines, such as
+    /// the offers' impressions on a product, are left out.
     @MainActor
-    private func timeline(of app: XCUIApplication, lines count: Int) -> [String] {
-        let lines = app.staticTexts.matching(identifier: "timeline-line")
+    private func screenViews(in app: XCUIApplication, count: Int) -> [String] {
+        let lines = app.staticTexts.matching(
+            NSPredicate(format: "identifier == 'timeline-line' AND label BEGINSWITH 'screen '"))
         let filled = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "count == %d", count), object: lines)
         XCTWaiter().wait(for: [filled], timeout: 5)
