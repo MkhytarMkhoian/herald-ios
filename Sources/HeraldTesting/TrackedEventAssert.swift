@@ -24,7 +24,7 @@ public struct TrackedEventAssert {
     ) {
         guard let actual = event.parameters[key] else {
             fail(
-                "Event '\(name)' has no parameter '\(key)'\(describe(event.parameters)).",
+                "Event '\(name)' has no parameter '\(key)'\(formattedParameters(event.parameters)).",
                 sourceLocation)
             return
         }
@@ -63,7 +63,7 @@ public struct TrackedEventAssert {
         if !event.parameters.isEmpty {
             fail(
                 "Expected '\(name)' to carry no parameters, but it carried"
-                    + "\(describe(event.parameters)).",
+                    + "\(formattedParameters(event.parameters)).",
                 sourceLocation)
         }
     }

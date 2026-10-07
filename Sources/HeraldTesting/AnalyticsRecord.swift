@@ -68,7 +68,7 @@ public enum AnalyticsRecord: Sendable, Equatable, CustomStringConvertible {
     public var description: String {
         switch self {
         case .tracked(let event):
-            return "event    \(event.name)\(describe(event.parameters))"
+            return "event    \(event.name)\(formattedParameters(event.parameters))"
         case .propertySet(let property):
             return "property \(property.name) = \(property.value.asString)"
         case .identified(let identity):
@@ -86,7 +86,7 @@ public enum AnalyticsRecord: Sendable, Equatable, CustomStringConvertible {
 }
 
 /// Parameters as failures show them: sorted by key, or nothing when there are none.
-func describe(_ parameters: [String: AnalyticsValue]) -> String {
+func formattedParameters(_ parameters: [String: AnalyticsValue]) -> String {
     if parameters.isEmpty {
         return ""
     }
