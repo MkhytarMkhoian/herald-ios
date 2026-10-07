@@ -5,7 +5,7 @@ and the five vendor packages.
 
 ## Version 1.0.0-beta.1
 
-_Unreleased_
+_2026-10-07_
 
 The first preview of Herald for iOS: the design of the Android and Flutter SDKs, in Swift, over
 each vendor's official iOS SDK.
