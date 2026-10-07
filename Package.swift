@@ -9,6 +9,7 @@ let package = Package(
         .library(name: "HeraldCore", targets: ["HeraldCore"]),
         .library(name: "HeraldLog", targets: ["HeraldLog"]),
         .library(name: "HeraldTesting", targets: ["HeraldTesting"]),
+        .library(name: "HeraldSwiftUI", targets: ["HeraldSwiftUI"]),
     ],
     targets: [
         .target(name: "HeraldCore"),
@@ -19,5 +20,8 @@ let package = Package(
 
         .target(name: "HeraldTesting", dependencies: ["HeraldCore"]),
         .testTarget(name: "HeraldTestingTests", dependencies: ["HeraldTesting"]),
+
+        .target(name: "HeraldSwiftUI", dependencies: ["HeraldCore"]),
+        .testTarget(name: "HeraldSwiftUITests", dependencies: ["HeraldSwiftUI"]),
     ]
 )
