@@ -134,6 +134,9 @@ The full documentation is on the [project website](https://mkhytarmkhoian.github
 Its guides describe Herald itself, not one platform, and show the code for iOS, Android and
 Flutter. The code on the website comes from [`Samples`](Samples), which CI builds and tests.
 
+The [example app](Example) sends every call to the log and to an on-screen timeline, and tests its
+analytics with `HeraldTesting`.
+
 See [CHANGELOG.md](CHANGELOG.md) for release notes and [CONTRIBUTING.md](CONTRIBUTING.md) to
 contribute.
 
