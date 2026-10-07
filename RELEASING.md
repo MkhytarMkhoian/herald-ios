@@ -18,11 +18,18 @@ to redeploy the website with the new samples and change log.
 3. **Check that everything passes,** with the vendor repositories cloned next to `herald-ios`:
 
     ```bash
-    swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Package.swift
+    swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Example Package.swift
     swift test
+    scripts/check-api.sh
     (cd Samples && xcodebuild test -scheme herald-ios-samples-Package \
         -destination "id=$(../scripts/simulator.sh)")
+    xcodebuild test -project Example/HeraldExample.xcodeproj -scheme HeraldExample \
+        -destination "id=$(scripts/simulator.sh)"
     ```
+
+    If a repository has an `api-breakage-allowlist.txt`, check that each break in it has a
+    `Breaking:` line in the change log, then delete the file: the new release is what the next
+    changes are compared with.
 
 4. **Release `herald-ios`:**
 

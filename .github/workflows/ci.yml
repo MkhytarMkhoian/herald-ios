@@ -1,5 +1,6 @@
-# Checks every push and pull request: formatting, the tests on macOS and in the iOS Simulator, and
-# the website's samples, built against the latest code of all six Herald for iOS repositories.
+# Checks every push and pull request: formatting, the tests on macOS and in the iOS Simulator, the
+# public API against the latest release, the example app, and the website's samples, built against
+# the latest code of all six Herald for iOS repositories.
 name: CI
 
 on:
@@ -18,7 +19,7 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Formatting
-        run: swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Package.swift
+        run: swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Example Package.swift
 
       # Includes the tests that check a setup mistake stops the app, which only run on macOS.
       - name: Tests on macOS
@@ -28,6 +29,27 @@ jobs:
         run: |
           device=$(scripts/simulator.sh)
           xcodebuild test -scheme herald-ios-Package -destination "id=$device" -quiet
+
+  api:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # the tags, to find the latest release
+
+      - name: No accidental breaking changes
+        run: scripts/check-api.sh
+
+  example:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build and test the example app
+        run: |
+          device=$(scripts/simulator.sh)
+          xcodebuild test -project Example/HeraldExample.xcodeproj -scheme HeraldExample \
+            -destination "id=$device" -quiet
 
   samples:
     runs-on: macos-26

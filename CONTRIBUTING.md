@@ -10,8 +10,8 @@ an issue first.
 
 ## Setting up
 
-Herald for iOS is six Swift packages: this one, with `HeraldCore`, `HeraldLog` and
-`HeraldTesting`, and one package per vendor, each in its own repository. Clone them next to each
+Herald for iOS is six Swift packages: this one, with `HeraldCore`, `HeraldLog`, `HeraldTesting`
+and `HeraldSwiftUI`, and one package per vendor, each in its own repository. Clone them next to each
 other:
 
 ```bash
@@ -26,14 +26,17 @@ They need Xcode 16 or newer.
 ```bash
 swift build
 swift test                      # the modules that also build for macOS
-swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Package.swift
+swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Example Package.swift
+scripts/check-api.sh            # no breaking changes since the latest release
 ```
 
-The samples build for iOS only, in the Simulator:
+The samples and the example app build for iOS only, in the Simulator:
 
 ```bash
 cd Samples && xcodebuild test -scheme herald-ios-samples-Package \
     -destination "id=$(../scripts/simulator.sh)"
+xcodebuild test -project Example/HeraldExample.xcodeproj -scheme HeraldExample \
+    -destination "id=$(scripts/simulator.sh)"
 ```
 
 To try your change in an app, add your checkout as a local package: in Xcode, File → Add Package
@@ -59,5 +62,9 @@ Dependencies → Add Local.
   the marked sections of `README.md` by name, so keep those names, or rename them on the website
   in step.
 - **Tests** with Swift Testing, named in plain words, such as `aFailingVendorIsReported`.
+- **No accidental breaking changes.** `scripts/check-api.sh` compares the public API with the
+  latest release, in CI too, in every repository. When a break is intended, copy the line it
+  reports, the text after 💔, into `api-breakage-allowlist.txt`, and add a `Breaking:` line to the
+  change log.
 - **A line in `CHANGELOG.md`** under the next, unreleased version, starting with `New:`, `Fix:`,
   `Upgrade:` or `Breaking:`.
