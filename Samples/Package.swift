@@ -7,8 +7,8 @@ import PackageDescription
 // It's a package of its own, so apps that add herald-ios never see it or its dependencies.
 let package = Package(
     name: "herald-ios-samples",
-    // Adjust's SDK builds for iOS only.
-    platforms: [.iOS(.v15)],
+    // Adjust's SDK builds for iOS only, and the SwiftUI samples use NavigationStack.
+    platforms: [.iOS(.v16)],
     dependencies: [
         .package(path: ".."),
         .package(path: "../../herald-ios-firebase"),
@@ -29,6 +29,7 @@ let package = Package(
             dependencies: [
                 .product(name: "HeraldCore", package: "herald-ios"),
                 .product(name: "HeraldLog", package: "herald-ios"),
+                .product(name: "HeraldSwiftUI", package: "herald-ios"),
                 .product(name: "HeraldFirebase", package: "herald-ios-firebase"),
                 .product(name: "HeraldMixpanel", package: "herald-ios-mixpanel"),
                 .product(name: "HeraldAmplitude", package: "herald-ios-amplitude"),

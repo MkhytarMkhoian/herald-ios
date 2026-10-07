@@ -3,6 +3,16 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the five vendor packages.
 
+## Version 1.0.0-beta.2
+
+_Not released yet_
+
+ * New: `HeraldSwiftUI`, for tracking from SwiftUI views: `.eventTracker(_:)` gives views the
+   tracker, `.trackScreenView(_:)` and `.track(_:on:)` track each time a screen is shown or hidden,
+   and `.trackImpression(_:threshold:minVisibleDuration:)` tracks once per appearance, when enough
+   of a view has been on screen long enough. On iOS 18 and newer, impressions also see what a
+   scroll view cuts off.
+
 ## Version 1.0.0-beta.1
 
 _2026-10-07_

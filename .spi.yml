@@ -2,4 +2,4 @@
 version: 1
 builder:
   configs:
-    - documentation_targets: [HeraldCore, HeraldLog, HeraldTesting]
+    - documentation_targets: [HeraldCore, HeraldLog, HeraldTesting, HeraldSwiftUI]

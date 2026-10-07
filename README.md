@@ -80,6 +80,7 @@ reporter instead of to your code.
 | [`herald-ios`](https://github.com/MkhytarMkhoian/herald-ios) | `HeraldCore` | Events, properties and `Herald` itself. No vendor SDK or DI library. |
 | | `HeraldLog` | Prints every call, for debug builds. |
 | | `HeraldTesting` | `FakeAnalyticsProvider`, a fake vendor that records events so your tests can check them. |
+| | `HeraldSwiftUI` | [Tracks from SwiftUI views](https://mkhytarmkhoian.github.io/herald-docs/sdks/ios/swiftui/): screen views each time a screen becomes visible, and impressions when something is really on screen. Optional. |
 | [`herald-ios-firebase`](https://github.com/MkhytarMkhoian/herald-ios-firebase) | `HeraldFirebase` | Sends to Firebase Analytics (GA4). |
 | [`herald-ios-mixpanel`](https://github.com/MkhytarMkhoian/herald-ios-mixpanel) | `HeraldMixpanel` | Sends to Mixpanel: events, user profile and super properties. |
 | [`herald-ios-amplitude`](https://github.com/MkhytarMkhoian/herald-ios-amplitude) | `HeraldAmplitude` | Sends to Amplitude: events, user properties, screen views and revenue. |
