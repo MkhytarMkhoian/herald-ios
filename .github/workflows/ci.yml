@@ -1,0 +1,50 @@
+# Checks every push and pull request: formatting, the tests on macOS and in the iOS Simulator, and
+# the website's samples, built against the latest code of all six Herald for iOS repositories.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Formatting
+        run: swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Package.swift
+
+      # Includes the tests that check a setup mistake stops the app, which only run on macOS.
+      - name: Tests on macOS
+        run: swift test
+
+      - name: Tests in the iOS Simulator
+        run: |
+          device=$(scripts/simulator.sh)
+          xcodebuild test -scheme herald-ios-Package -destination "id=$device" -quiet
+
+  samples:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      # The samples use every vendor package, found next to this repository, as on a developer's
+      # machine.
+      - name: Check out the vendor packages
+        run: |
+          for vendor in firebase mixpanel amplitude adjust appsflyer; do
+            git clone --depth 1 "https://github.com/MkhytarMkhoian/herald-ios-$vendor" \
+              "../herald-ios-$vendor"
+          done
+
+      - name: Build and test the samples
+        working-directory: Samples
+        run: |
+          device=$(../scripts/simulator.sh)
+          xcodebuild test -scheme herald-ios-samples-Package -destination "id=$device" -quiet

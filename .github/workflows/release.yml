@@ -1,0 +1,19 @@
+# A release is a `v*` tag; Swift Package Manager serves it straight from GitHub, so there is
+# nothing to upload. This workflow asks herald-docs to redeploy the website, which takes its Swift
+# samples and change log from the newest release tag.
+#
+# Needs the DOCS_DISPATCH_TOKEN secret, a token that starts herald-docs' workflows.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Redeploy the website
+        env:
+          GH_TOKEN: ${{ secrets.DOCS_DISPATCH_TOKEN }}
+        run: gh api repos/MkhytarMkhoian/herald-docs/dispatches -f event_type=sdk-release

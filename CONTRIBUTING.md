@@ -10,12 +10,30 @@ an issue first.
 
 ## Setting up
 
-Herald is a Swift package. It needs Xcode 16 or newer.
+Herald for iOS is six Swift packages: this one, with `HeraldCore`, `HeraldLog` and
+`HeraldTesting`, and one package per vendor, each in its own repository. Clone them next to each
+other:
+
+```bash
+for repo in herald-ios herald-ios-firebase herald-ios-mixpanel herald-ios-amplitude \
+    herald-ios-adjust herald-ios-appsflyer; do
+  git clone "https://github.com/MkhytarMkhoian/$repo"
+done
+```
+
+They need Xcode 16 or newer.
 
 ```bash
 swift build
 swift test                      # the modules that also build for macOS
-swift format lint -r Sources Tests Package.swift
+swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Package.swift
+```
+
+The samples build for iOS only, in the Simulator:
+
+```bash
+cd Samples && xcodebuild test -scheme herald-ios-samples-Package \
+    -destination "id=$(../scripts/simulator.sh)"
 ```
 
 To try your change in an app, add your checkout as a local package: in Xcode, File → Add Package
@@ -35,6 +53,11 @@ Dependencies → Add Local.
 - **Throw instead of quietly fixing data.** Inside a vendor module, refuse bad input by throwing.
   The vendor's public methods catch it and pass it to `Herald.reportFailure`, so the app's error
   reporter sees it.
+- **The website's samples,** when users would notice. The code on the website comes from
+  [`Samples`](Samples), a package of its own that uses `herald-ios` and every vendor package from
+  the folders next to it. CI builds and tests it. The website shows each `// --8<--` section and
+  the marked sections of `README.md` by name, so keep those names, or rename them on the website
+  in step.
 - **Tests** with Swift Testing, named in plain words, such as `aFailingVendorIsReported`.
 - **A line in `CHANGELOG.md`** under the next, unreleased version, starting with `New:`, `Fix:`,
   `Upgrade:` or `Breaking:`.
