@@ -5,7 +5,7 @@ and the five vendor packages.
 
 ## Version 1.0.0-beta.2
 
-_Not released yet_
+_2026-10-07_
 
  * New: `HeraldSwiftUI`, for tracking from SwiftUI views: `.eventTracker(_:)` gives views the
    tracker, `.trackScreenView(_:)` and `.track(_:on:)` track each time a screen is shown or hidden,

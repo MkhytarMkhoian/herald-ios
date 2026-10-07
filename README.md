@@ -17,8 +17,8 @@ This repository is the **iOS SDK**, in Swift. It is the same design as the
 [Flutter](https://github.com/MkhytarMkhoian/herald-flutter) SDKs: the same events, capabilities,
 factories and vendor rules.
 
-> **Beta.** Version 1.0.0-beta.1 is the first release, so you can try it before its API is fixed
-> at 1.0.0.
+> **Beta.** Version 1.0.0-beta.2 is a preview, so you can try it before its API is fixed at
+> 1.0.0.
 
 ## Install
 
@@ -27,8 +27,8 @@ analytics service you use. In a `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/MkhytarMkhoian/herald-ios", from: "1.0.0-beta.1"),
-    .package(url: "https://github.com/MkhytarMkhoian/herald-ios-firebase", from: "1.0.0-beta.1"),
+    .package(url: "https://github.com/MkhytarMkhoian/herald-ios", from: "1.0.0-beta.2"),
+    .package(url: "https://github.com/MkhytarMkhoian/herald-ios-firebase", from: "1.0.0-beta.2"),
 ]
 ```
 
