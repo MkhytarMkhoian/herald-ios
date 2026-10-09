@@ -1,8 +1,15 @@
+import Foundation
 import HeraldCore
 import HeraldTesting
 import Testing
 
 @testable import HeraldInterop
+
+// Stand-ins for what Kotlin exports: a label is an Objective-C protocol, and an event is an object
+// that conforms to it.
+@objc private protocol PersonalDataLabel {}
+private final class KotlinProfileOpened: NSObject, PersonalDataLabel {}
+private final class KotlinCheckoutStarted: NSObject {}
 
 @Suite struct HeraldInteropTests {
     private let analytics = FakeAnalyticsProvider()
@@ -23,7 +30,7 @@ import Testing
                 "plan": .string("pro"), "seats": .int(3), "price": .double(9.5),
                 "trial": .bool(true),
             ],
-            markers: [])
+            isScreenView: false, kotlinEvent: KotlinCheckoutStarted())
 
         analytics.assertTracked("checkout_started") { event in
             event.param("plan", "pro")
@@ -33,18 +40,39 @@ import Testing
         }
     }
 
-    @Test func theScreenViewMarkerMakesAScreenViewEvent() {
-        bridge().track(name: "home", parameters: [:], markers: ["screen_view"])
+    @Test func aScreenViewBecomesAScreenViewEvent() {
+        bridge().track(
+            name: "home", parameters: [:], isScreenView: true, kotlinEvent: KotlinCheckoutStarted())
 
         #expect(analytics.events.first is any ScreenViewEvent)
     }
 
-    @Test func otherMarkersStayOnTheEvent() {
-        bridge().track(name: "profile_opened", parameters: [:], markers: ["personal_data"])
+    @Test func theKotlinEventKeepsItsLabels() {
+        bridge().track(
+            name: "profile_opened", parameters: [:], isScreenView: false,
+            kotlinEvent: KotlinProfileOpened())
+        bridge().track(
+            name: "checkout_started", parameters: [:], isScreenView: false,
+            kotlinEvent: KotlinCheckoutStarted())
 
-        let event = analytics.events.first as? BridgedEvent
-        #expect(event?.markers == ["personal_data"])
-        #expect(!(analytics.events.first is any ScreenViewEvent))
+        #expect(analytics.events[0].kotlinEvent is PersonalDataLabel)
+        #expect(!(analytics.events[1].kotlinEvent is PersonalDataLabel))
+    }
+
+    @Test func aScreenViewKeepsItsKotlinEventToo() {
+        bridge().track(
+            name: "profile", parameters: [:], isScreenView: true, kotlinEvent: KotlinProfileOpened()
+        )
+
+        #expect(analytics.events.first?.kotlinEvent is PersonalDataLabel)
+    }
+
+    @Test func anEventFromSwiftHasNoKotlinEvent() {
+        struct SwiftEvent: Event {
+            var name: String { "swift_event" }
+        }
+
+        #expect(SwiftEvent().kotlinEvent == nil)
     }
 
     @Test func aUserPropertyStaysAUserProperty() {
@@ -64,8 +92,7 @@ import Testing
         bridge.flush()
         bridge.reset()
 
-        #expect(
-            analytics.records.map { record in "\(record)" }.count == 5)
+        #expect(analytics.records.count == 5)
         analytics.assertIdentified("user-42")
     }
 }

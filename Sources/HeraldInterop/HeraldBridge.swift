@@ -18,14 +18,17 @@ public final class HeraldBridge: NSObject, Sendable {
         self.herald = herald
     }
 
-    /// Tracks an event. A `"screen_view"` marker makes it a ``ScreenViewEvent``. Other markers are
-    /// kept on the ``BridgedEvent`` for your own factories to read.
-    @objc public func track(name: String, parameters: [String: BridgeValue], markers: Set<String>) {
+    /// Tracks an event. `kotlinEvent` is the original Kotlin object: your own factories check its
+    /// labels with ``HeraldCore/Event/kotlinEvent``.
+    @objc public func track(
+        name: String, parameters: [String: BridgeValue], isScreenView: Bool, kotlinEvent: AnyObject
+    ) {
         let values = parameters.mapValues { parameter in parameter.value }
-        if markers.contains(BridgedScreenViewEvent.marker) {
-            herald.track(BridgedScreenViewEvent(name: name, parameters: values, markers: markers))
+        if isScreenView {
+            herald.track(
+                BridgedScreenViewEvent(name: name, parameters: values, source: kotlinEvent))
         } else {
-            herald.track(BridgedEvent(name: name, parameters: values, markers: markers))
+            herald.track(BridgedEvent(name: name, parameters: values, source: kotlinEvent))
         }
     }
 
@@ -67,20 +70,41 @@ public final class BridgeValue: NSObject, Sendable {
     @objc public static func bool(_ value: Bool) -> BridgeValue { BridgeValue(.bool(value)) }
 }
 
-/// An event that came through the bridge. Your own factories can match its markers.
-public struct BridgedEvent: Event {
+// Kotlin objects aren't marked Sendable, but a tracked event never changes, so it's safe to share:
+// hence `@unchecked Sendable` on the two event types.
+
+/// An event that came through the bridge.
+public struct BridgedEvent: Event, @unchecked Sendable {
     public let name: String
     public let parameters: [String: AnalyticsValue]
-    public let markers: Set<String>
+    let source: AnyObject
 }
 
-/// A screen view that came through the bridge, with the `"screen_view"` marker.
-public struct BridgedScreenViewEvent: ScreenViewEvent {
-    static let marker = "screen_view"
-
+/// A screen view that came through the bridge.
+public struct BridgedScreenViewEvent: ScreenViewEvent, @unchecked Sendable {
     public let name: String
     public let parameters: [String: AnalyticsValue]
-    public let markers: Set<String>
+    let source: AnyObject
+}
+
+extension Event {
+    /// The Kotlin object this event was made from, or nil for an event tracked from Swift. Check
+    /// your shared labels on it:
+    ///
+    /// ```swift
+    /// if event.kotlinEvent is PersonalDataEvent {
+    ///     return .dropped
+    /// }
+    /// ```
+    public var kotlinEvent: AnyObject? {
+        if let event = self as? BridgedEvent {
+            return event.source
+        }
+        if let event = self as? BridgedScreenViewEvent {
+            return event.source
+        }
+        return nil
+    }
 }
 
 public struct BridgedProperty: Property {
