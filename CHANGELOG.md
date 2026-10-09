@@ -3,6 +3,13 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the five vendor packages.
 
+## Version 1.0.0
+
+_2026-10-09_
+
+The first stable release, with the same API as 1.0.0-beta.2. From now on the API changes
+incompatibly only in a major version.
+
 ## Version 1.0.0-beta.2
 
 _2026-10-07_
