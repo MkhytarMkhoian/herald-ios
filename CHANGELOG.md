@@ -5,7 +5,7 @@ and the five vendor packages.
 
 ## Version 1.1.0
 
-_Not released yet_
+_2026-10-12_
 
  * New: `HeraldInterop`, for Kotlin Multiplatform apps: `HeraldBridge` lets shared Kotlin code,
    through [herald-kmp](https://github.com/MkhytarMkhoian/herald-kmp), use a `Herald` set up in

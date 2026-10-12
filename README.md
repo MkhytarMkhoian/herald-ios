@@ -26,8 +26,8 @@ analytics service you use. In a `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/MkhytarMkhoian/herald-ios", from: "1.0.0"),
-    .package(url: "https://github.com/MkhytarMkhoian/herald-ios-firebase", from: "1.0.0"),
+    .package(url: "https://github.com/MkhytarMkhoian/herald-ios", from: "1.1.0"),
+    .package(url: "https://github.com/MkhytarMkhoian/herald-ios-firebase", from: "1.1.0"),
 ]
 ```
 
