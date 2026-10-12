@@ -14,13 +14,14 @@ private final class KotlinCheckoutStarted: NSObject {}
 @Suite struct HeraldInteropTests {
     private let analytics = FakeAnalyticsProvider()
 
-    private func bridge() -> HeraldBridge {
+    private func bridge(translate: HeraldBridge.Translation? = nil) -> HeraldBridge {
         HeraldBridge(
             Herald(providers: [
                 HeraldProvider(
                     name: "fake", events: analytics, properties: analytics, identity: analytics,
                     lifecycle: analytics, consent: analytics)
-            ]))
+            ]),
+            translate: translate)
     }
 
     @Test func anEventKeepsItsNameAndTypedParameters() {
@@ -73,6 +74,29 @@ private final class KotlinCheckoutStarted: NSObject {}
         }
 
         #expect(SwiftEvent().kotlinEvent == nil)
+    }
+
+    @Test func aTranslatedEventIsTrackedInsteadOfAPlainOne() {
+        struct Purchase: Event, Equatable {
+            let price: Double
+            let parameters: [String: AnalyticsValue]
+            var name: String { "purchase" }
+        }
+        let bridge = bridge { kotlinEvent, parameters in
+            kotlinEvent is KotlinProfileOpened ? Purchase(price: 4.99, parameters: parameters) : nil
+        }
+
+        bridge.track(
+            name: "profile_opened", parameters: ["plan": .string("pro")], isScreenView: false,
+            kotlinEvent: KotlinProfileOpened())
+        bridge.track(
+            name: "checkout_started", parameters: [:], isScreenView: false,
+            kotlinEvent: KotlinCheckoutStarted())
+
+        #expect(
+            analytics.events[0] as? Purchase
+                == Purchase(price: 4.99, parameters: ["plan": .string("pro")]))
+        #expect(analytics.events[1] is BridgedEvent)
     }
 
     @Test func aUserPropertyStaysAUserProperty() {
