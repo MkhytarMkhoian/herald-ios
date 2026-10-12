@@ -3,6 +3,16 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the five vendor packages.
 
+## Version 1.1.0
+
+_Not released yet_
+
+ * New: `HeraldInterop`, for Kotlin Multiplatform apps: `HeraldBridge` lets shared Kotlin code,
+   through [herald-kmp](https://github.com/MkhytarMkhoian/herald-kmp), use a `Herald` set up in
+   Swift. `translate` turns Kotlin vendor events, such as revenue, into herald-ios's, and a vendor
+   event left untranslated goes to the error reporter. `event.kotlinEvent` lets factories check
+   shared Kotlin labels.
+
 ## Version 1.0.0
 
 _2026-10-09_
