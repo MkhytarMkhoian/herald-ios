@@ -19,33 +19,51 @@ public final class HeraldBridge: NSObject, Sendable {
 
     private let herald: Herald
     private let translate: Translation?
+    private let errorReporter: AnalyticsErrorReporter?
 
     /// `translate` lets vendor-specific Kotlin events, such as revenue, become the herald-ios
     /// events their vendors recognise:
     ///
     /// ```swift
-    /// let bridge = HeraldBridge(herald) { kotlinEvent, parameters in
+    /// func revenueEvent(from kotlinEvent: AnyObject, parameters: [String: AnalyticsValue])
+    ///     -> (any Event)?
+    /// {
     ///     if let event = kotlinEvent as? KotlinAmplitudeRevenueEvent {
     ///         return AmplitudeRevenueEvent(
     ///             name: event.name, price: event.price, parameters: parameters)
     ///     }
     ///     return nil
     /// }
+    ///
+    /// let bridge = HeraldBridge(herald, translate: revenueEvent, errorReporter: report)
     /// ```
-    public init(_ herald: Herald, translate: Translation? = nil) {
+    ///
+    /// A vendor event that `translate` doesn't handle goes to `errorReporter`, and is tracked as a
+    /// plain event, so vendors without revenue still get it. Without an `errorReporter`, it stops
+    /// a debug build instead.
+    public init(
+        _ herald: Herald, translate: Translation? = nil,
+        errorReporter: AnalyticsErrorReporter? = nil
+    ) {
         self.herald = herald
+        self.errorReporter = errorReporter
         self.translate = translate
     }
 
     /// Tracks an event. `kotlinEvent` is the original Kotlin object: your own factories check its
-    /// labels with ``HeraldCore/Event/kotlinEvent``.
+    /// labels with ``HeraldCore/Event/kotlinEvent``. `needsTranslation` marks a vendor event, such
+    /// as revenue, that only `translate` can turn into the type its vendor recognises.
     @objc public func track(
-        name: String, parameters: [String: BridgeValue], isScreenView: Bool, kotlinEvent: AnyObject
+        name: String, parameters: [String: BridgeValue], isScreenView: Bool,
+        needsTranslation: Bool, kotlinEvent: AnyObject
     ) {
         let values = parameters.mapValues { parameter in parameter.value }
         if let translated = translate?(kotlinEvent, values) {
             herald.track(translated)
             return
+        }
+        if needsTranslation {
+            reportUntranslated(name: name, kotlinEvent: kotlinEvent)
         }
         if isScreenView {
             herald.track(
@@ -72,6 +90,27 @@ public final class HeraldBridge: NSObject, Sendable {
     @objc public func flush() { herald.flush() }
 
     @objc public func setEnabled(_ enabled: Bool) { herald.setEnabled(enabled) }
+
+    private func reportUntranslated(name: String, kotlinEvent: AnyObject) {
+        let error = UntranslatedEvent(kotlinType: String(describing: type(of: kotlinEvent)))
+        guard let errorReporter else {
+            assertionFailure("\(error)")
+            return
+        }
+        errorReporter(
+            AnalyticsFailure(
+                provider: "HeraldBridge", operation: .track(eventName: name), error: error))
+    }
+}
+
+/// A vendor event from Kotlin that `translate` didn't turn into its herald-ios type.
+struct UntranslatedEvent: Error, CustomStringConvertible {
+    let kotlinType: String
+
+    var description: String {
+        "\(kotlinType) has no translation, so its vendor gets it as a plain event. Add its block "
+            + "to the translate function, as in herald-kmp's RevenueTranslation.swift."
+    }
 }
 
 /// A typed value Objective-C can carry. An `NSNumber` can't: it forgets whether 3 was an Int, a
