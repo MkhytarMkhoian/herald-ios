@@ -14,14 +14,16 @@ private final class KotlinCheckoutStarted: NSObject {}
 @Suite struct HeraldInteropTests {
     private let analytics = FakeAnalyticsProvider()
 
-    private func bridge(translate: HeraldBridge.Translation? = nil) -> HeraldBridge {
+    private func bridge(
+        translate: HeraldBridge.Translation? = nil, errorReporter: AnalyticsErrorReporter? = nil
+    ) -> HeraldBridge {
         HeraldBridge(
             Herald(providers: [
                 HeraldProvider(
                     name: "fake", events: analytics, properties: analytics, identity: analytics,
                     lifecycle: analytics, consent: analytics)
             ]),
-            translate: translate)
+            translate: translate, errorReporter: errorReporter)
     }
 
     @Test func anEventKeepsItsNameAndTypedParameters() {
@@ -31,7 +33,7 @@ private final class KotlinCheckoutStarted: NSObject {}
                 "plan": .string("pro"), "seats": .int(3), "price": .double(9.5),
                 "trial": .bool(true),
             ],
-            isScreenView: false, kotlinEvent: KotlinCheckoutStarted())
+            isScreenView: false, needsTranslation: false, kotlinEvent: KotlinCheckoutStarted())
 
         analytics.assertTracked("checkout_started") { event in
             event.param("plan", "pro")
@@ -43,17 +45,18 @@ private final class KotlinCheckoutStarted: NSObject {}
 
     @Test func aScreenViewBecomesAScreenViewEvent() {
         bridge().track(
-            name: "home", parameters: [:], isScreenView: true, kotlinEvent: KotlinCheckoutStarted())
+            name: "home", parameters: [:], isScreenView: true, needsTranslation: false,
+            kotlinEvent: KotlinCheckoutStarted())
 
         #expect(analytics.events.first is any ScreenViewEvent)
     }
 
     @Test func theKotlinEventKeepsItsLabels() {
         bridge().track(
-            name: "profile_opened", parameters: [:], isScreenView: false,
+            name: "profile_opened", parameters: [:], isScreenView: false, needsTranslation: false,
             kotlinEvent: KotlinProfileOpened())
         bridge().track(
-            name: "checkout_started", parameters: [:], isScreenView: false,
+            name: "checkout_started", parameters: [:], isScreenView: false, needsTranslation: false,
             kotlinEvent: KotlinCheckoutStarted())
 
         #expect(analytics.events[0].kotlinEvent is PersonalDataLabel)
@@ -62,7 +65,8 @@ private final class KotlinCheckoutStarted: NSObject {}
 
     @Test func aScreenViewKeepsItsKotlinEventToo() {
         bridge().track(
-            name: "profile", parameters: [:], isScreenView: true, kotlinEvent: KotlinProfileOpened()
+            name: "profile", parameters: [:], isScreenView: true, needsTranslation: false,
+            kotlinEvent: KotlinProfileOpened()
         )
 
         #expect(analytics.events.first?.kotlinEvent is PersonalDataLabel)
@@ -88,15 +92,39 @@ private final class KotlinCheckoutStarted: NSObject {}
 
         bridge.track(
             name: "profile_opened", parameters: ["plan": .string("pro")], isScreenView: false,
-            kotlinEvent: KotlinProfileOpened())
+            needsTranslation: true, kotlinEvent: KotlinProfileOpened())
         bridge.track(
             name: "checkout_started", parameters: [:], isScreenView: false,
-            kotlinEvent: KotlinCheckoutStarted())
+            needsTranslation: false, kotlinEvent: KotlinCheckoutStarted())
 
         #expect(
             analytics.events[0] as? Purchase
                 == Purchase(price: 4.99, parameters: ["plan": .string("pro")]))
         #expect(analytics.events[1] is BridgedEvent)
+    }
+
+    @Test func anUntranslatedVendorEventIsReportedAndTrackedAsAPlainEvent() {
+        let failures = Failures()
+        let bridge = bridge(translate: { _, _ in nil }, errorReporter: failures.add)
+
+        bridge.track(
+            name: "purchase", parameters: [:], isScreenView: false, needsTranslation: true,
+            kotlinEvent: KotlinProfileOpened())
+
+        #expect(failures.all.map { failure in "\(failure.operation)" } == ["Track(purchase)"])
+        #expect("\(failures.all[0].error)".contains("has no translation"))
+        #expect(analytics.events.first is BridgedEvent)
+    }
+
+    @Test func aPlainEventWithoutATranslationIsNotReported() {
+        let failures = Failures()
+        let bridge = bridge(translate: { _, _ in nil }, errorReporter: failures.add)
+
+        bridge.track(
+            name: "checkout_started", parameters: [:], isScreenView: false,
+            needsTranslation: false, kotlinEvent: KotlinCheckoutStarted())
+
+        #expect(failures.all.isEmpty)
     }
 
     @Test func aUserPropertyStaysAUserProperty() {
@@ -118,5 +146,23 @@ private final class KotlinCheckoutStarted: NSObject {}
 
         #expect(analytics.records.count == 5)
         analytics.assertIdentified("user-42")
+    }
+}
+
+/// Collects reported failures. Reports can come from any thread, hence the lock.
+private final class Failures: @unchecked Sendable {
+    private let lock = NSLock()
+    private var failures: [AnalyticsFailure] = []
+
+    var all: [AnalyticsFailure] {
+        lock.lock()
+        defer { lock.unlock() }
+        return failures
+    }
+
+    func add(_ failure: AnalyticsFailure) {
+        lock.lock()
+        defer { lock.unlock() }
+        failures.append(failure)
     }
 }
