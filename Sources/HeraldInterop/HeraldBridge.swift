@@ -1,19 +1,14 @@
 import Foundation
 import HeraldCore
 
-/// Lets code that can't call Swift, such as Kotlin Multiplatform, use a ``Herald`` set up in Swift.
+/// Lets Kotlin Multiplatform code use a ``Herald`` set up in Swift.
 ///
-/// Everything here is visible to Objective-C, and so to Kotlin. Each call becomes an ordinary
-/// Herald event or property, so the vendors' factories treat it as if Swift had sent it:
-///
-/// ```swift
-/// let herald = Herald(providers: [firebaseProvider()])
-/// let bridge = HeraldBridge(herald)  // hand this to the shared code
-/// ```
+/// Kotlin can call it because it's visible to Objective-C. Each call becomes an ordinary Herald
+/// event or property, so vendors treat it as if Swift had sent it.
 @objc(HRBHerald)
 public final class HeraldBridge: NSObject, Sendable {
-    /// Turns a Kotlin event, with its parameters already in Swift, into a herald-ios one, such as a
-    /// revenue event, or returns nil to track it as a plain event.
+    /// Turns a Kotlin event into a herald-ios one, such as a revenue event, or returns nil to track
+    /// it as a plain event. The parameters are already in Swift.
     public typealias Translation =
         @Sendable (_ kotlinEvent: AnyObject, _ parameters: [String: AnalyticsValue]) -> (any Event)?
 
@@ -21,26 +16,11 @@ public final class HeraldBridge: NSObject, Sendable {
     private let translate: Translation?
     private let errorReporter: AnalyticsErrorReporter?
 
-    /// `translate` lets vendor-specific Kotlin events, such as revenue, become the herald-ios
-    /// events their vendors recognise:
+    /// `translate` turns vendor events from Kotlin, such as revenue, into the herald-ios types
+    /// their vendors recognise. herald-kmp's `RevenueTranslation.swift` is a ready one to copy.
     ///
-    /// ```swift
-    /// func revenueEvent(from kotlinEvent: AnyObject, parameters: [String: AnalyticsValue])
-    ///     -> (any Event)?
-    /// {
-    ///     if let event = kotlinEvent as? KotlinAmplitudeRevenueEvent {
-    ///         return AmplitudeRevenueEvent(
-    ///             name: event.name, price: event.price, parameters: parameters)
-    ///     }
-    ///     return nil
-    /// }
-    ///
-    /// let bridge = HeraldBridge(herald, translate: revenueEvent, errorReporter: report)
-    /// ```
-    ///
-    /// A vendor event that `translate` doesn't handle goes to `errorReporter`, and is tracked as a
-    /// plain event, so vendors without revenue still get it. Without an `errorReporter`, it stops
-    /// a debug build instead.
+    /// A vendor event `translate` misses goes to `errorReporter`, and is still tracked as a plain
+    /// event. Without an `errorReporter`, it stops a debug build instead.
     public init(
         _ herald: Herald, translate: Translation? = nil,
         errorReporter: AnalyticsErrorReporter? = nil
@@ -50,9 +30,8 @@ public final class HeraldBridge: NSObject, Sendable {
         self.translate = translate
     }
 
-    /// Tracks an event. `kotlinEvent` is the original Kotlin object: your own factories check its
-    /// labels with ``HeraldCore/Event/kotlinEvent``. `needsTranslation` marks a vendor event, such
-    /// as revenue, that only `translate` can turn into the type its vendor recognises.
+    /// Tracks an event. `kotlinEvent` is the original Kotlin object, so factories can check its
+    /// labels. `needsTranslation` marks a vendor event that `translate` must handle.
     @objc public func track(
         name: String, parameters: [String: BridgeValue], isScreenView: Bool,
         needsTranslation: Bool, kotlinEvent: AnyObject
@@ -113,8 +92,8 @@ struct UntranslatedEvent: Error, CustomStringConvertible {
     }
 }
 
-/// A typed value Objective-C can carry. An `NSNumber` can't: it forgets whether 3 was an Int, a
-/// Double or a Bool, and Herald keeps them apart.
+/// A value that keeps its type on the way from Kotlin. An `NSNumber` would lose whether 3 was an
+/// Int, a Double or a Bool.
 @objc(HRBValue)
 public final class BridgeValue: NSObject, Sendable {
     let value: AnalyticsValue
@@ -132,8 +111,8 @@ public final class BridgeValue: NSObject, Sendable {
     @objc public static func bool(_ value: Bool) -> BridgeValue { BridgeValue(.bool(value)) }
 }
 
-// Kotlin objects aren't marked Sendable, but a tracked event never changes, so it's safe to share:
-// hence `@unchecked Sendable` on the two event types.
+// Kotlin objects aren't marked Sendable, but a tracked event never changes, so sharing it is
+// safe: hence `@unchecked Sendable`.
 
 /// An event that came through the bridge.
 public struct BridgedEvent: Event, @unchecked Sendable {
@@ -150,8 +129,8 @@ public struct BridgedScreenViewEvent: ScreenViewEvent, @unchecked Sendable {
 }
 
 extension Event {
-    /// The Kotlin object this event was made from, or nil for an event tracked from Swift. Check
-    /// your shared labels on it:
+    /// The Kotlin object this event came from, or nil for an event tracked from Swift. Check your
+    /// shared labels on it:
     ///
     /// ```swift
     /// if event.kotlinEvent is PersonalDataEvent {
