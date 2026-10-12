@@ -12,10 +12,29 @@ import HeraldCore
 /// ```
 @objc(HRBHerald)
 public final class HeraldBridge: NSObject, Sendable {
-    private let herald: Herald
+    /// Turns a Kotlin event, with its parameters already in Swift, into a herald-ios one, such as a
+    /// revenue event, or returns nil to track it as a plain event.
+    public typealias Translation =
+        @Sendable (_ kotlinEvent: AnyObject, _ parameters: [String: AnalyticsValue]) -> (any Event)?
 
-    public init(_ herald: Herald) {
+    private let herald: Herald
+    private let translate: Translation?
+
+    /// `translate` lets vendor-specific Kotlin events, such as revenue, become the herald-ios
+    /// events their vendors recognise:
+    ///
+    /// ```swift
+    /// let bridge = HeraldBridge(herald) { kotlinEvent, parameters in
+    ///     if let event = kotlinEvent as? KotlinAmplitudeRevenueEvent {
+    ///         return AmplitudeRevenueEvent(
+    ///             name: event.name, price: event.price, parameters: parameters)
+    ///     }
+    ///     return nil
+    /// }
+    /// ```
+    public init(_ herald: Herald, translate: Translation? = nil) {
         self.herald = herald
+        self.translate = translate
     }
 
     /// Tracks an event. `kotlinEvent` is the original Kotlin object: your own factories check its
@@ -24,6 +43,10 @@ public final class HeraldBridge: NSObject, Sendable {
         name: String, parameters: [String: BridgeValue], isScreenView: Bool, kotlinEvent: AnyObject
     ) {
         let values = parameters.mapValues { parameter in parameter.value }
+        if let translated = translate?(kotlinEvent, values) {
+            herald.track(translated)
+            return
+        }
         if isScreenView {
             herald.track(
                 BridgedScreenViewEvent(name: name, parameters: values, source: kotlinEvent))
