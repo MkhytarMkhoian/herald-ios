@@ -22,7 +22,7 @@ extension View {
     /// ```
     ///
     /// Redraws don't count, and neither do sheets or alerts over the screen, nor the app briefly
-    /// losing focus, as under Notification Center. A tab counts each time it's selected.
+    /// losing focus, as under Control Center. A tab counts each time it's selected.
     ///
     /// Put it on the screen's root view, not on a row of a list: a row appears each time it
     /// scrolls into view.
@@ -102,7 +102,7 @@ struct ScreenState {
             isInBackground = false
             return isOnScreen ? .visible : nil
         case .inactive:
-            return nil  // only focus lost, as under Notification Center: still in view
+            return nil  // only focus lost, as under Control Center: still in view
         @unknown default:
             return nil
         }
