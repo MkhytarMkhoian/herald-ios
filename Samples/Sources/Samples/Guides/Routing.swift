@@ -13,7 +13,7 @@ func routing(featureFirebaseFactories: [any FirebaseEventTrackerFactory]) -> [an
 
     // Adjust gets only events with a dashboard token.
     let adjustEvents = CompositeAdjustEventTrackerFactory([
-        TokenAdjustEventTrackerFactory(tokens: ["checkout_completed": "abc123"])
+        TokenAdjustEventTrackerFactory(tokens: [AdjustToken(CheckoutCompleted.self, "abc123")])
     ])  // nothing at the end: other events aren't sent
     // --8<-- [end:two-kinds]
     return [firebaseEvents, adjustEvents]

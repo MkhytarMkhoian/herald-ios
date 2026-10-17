@@ -13,7 +13,9 @@ func adjustProvider(featureFactories: [any AdjustEventTrackerFactory]) -> Herald
     let tracker = AdjustAnalyticsTrackerService(
         eventTrackerFactory: CompositeAdjustEventTrackerFactory(
             featureFactories + [  // revenue and custom mappings first
-                TokenAdjustEventTrackerFactory(tokens: ["checkout_completed": "abc123"])
+                TokenAdjustEventTrackerFactory(tokens: [
+                    AdjustToken(CheckoutCompleted.self, "abc123")
+                ])
             ]),  // nothing at the end: only tokened events are sent
         propertySetterFactory: GenericAdjustPropertySetterFactory()
     )

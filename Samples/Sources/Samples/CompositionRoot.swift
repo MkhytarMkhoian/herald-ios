@@ -50,7 +50,7 @@ func mixpanelProvider(mixpanel: MixpanelInstance) -> HeraldProvider {
     )
 }
 
-func adjustProvider(config: ADJConfig, tokens: [String: String]) -> HeraldProvider {
+func adjustProvider(config: ADJConfig, tokens: [AdjustToken]) -> HeraldProvider {
     let tracker = AdjustAnalyticsTrackerService(
         eventTrackerFactory: TokenAdjustEventTrackerFactory(tokens: tokens),  // tokened events only
         propertySetterFactory: GenericAdjustPropertySetterFactory()
@@ -86,7 +86,7 @@ func amplitudeProvider(amplitude: Amplitude) -> HeraldProvider {
 }
 
 func buildHerald(
-    mixpanel: MixpanelInstance, adjustConfig: ADJConfig, adjustTokens: [String: String]
+    mixpanel: MixpanelInstance, adjustConfig: ADJConfig, adjustTokens: [AdjustToken]
 ) -> Herald {
     // --8<-- [start:herald]
     let herald = Herald(

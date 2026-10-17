@@ -3,6 +3,19 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the five vendor packages.
 
+## Version 1.2.0
+
+_Unreleased_
+
+ * Breaking: `TokenAdjustEventTrackerFactory` takes a list of `AdjustToken`s, each pairing a token
+   with an event type, instead of a map from event names:
+   `TokenAdjustEventTrackerFactory(tokens: [AdjustToken(SignUpCompleted.self, "abc123")])`. A renamed
+   event keeps its token, the compiler checks the list, and an event of a subclass of a listed class
+   uses its token too. A type listed twice stops the app at start-up.
+ * Fix: `HeraldSwiftUI`'s docs give Control Center, not Notification Center, as an example of the
+   app briefly losing focus. Notification Center sends the app to the background, so it hides the
+   screen. The behaviour doesn't change.
+
 ## Version 1.1.0
 
 _2026-10-12_
