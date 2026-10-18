@@ -60,7 +60,7 @@ jobs:
       # machine.
       - name: Check out the vendor packages
         run: |
-          for vendor in firebase mixpanel amplitude adjust appsflyer; do
+          for vendor in firebase mixpanel amplitude adjust appsflyer meta; do
             git clone --depth 1 "https://github.com/MkhytarMkhoian/herald-ios-$vendor" \
               "../herald-ios-$vendor"
           done

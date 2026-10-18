@@ -12,7 +12,7 @@
 
 Herald is an analytics library for mobile apps. Your app describes what happened as an event, and
 Herald sends that event to every analytics service you use: Firebase, Adjust, Mixpanel, AppsFlyer,
-Amplitude, or one you build yourself.
+Amplitude, Meta, or one you build yourself.
 
 This repository is the **iOS SDK**, in Swift. It is the same design as the
 [Android](https://github.com/MkhytarMkhoian/herald) and
@@ -86,6 +86,7 @@ reporter instead of to your code.
 | [`herald-ios-amplitude`](https://github.com/MkhytarMkhoian/herald-ios-amplitude) | `HeraldAmplitude` | Sends to Amplitude: events, user properties, screen views and revenue. |
 | [`herald-ios-adjust`](https://github.com/MkhytarMkhoian/herald-ios-adjust) | `HeraldAdjust` | Sends to Adjust: events by dashboard token, purchases and ad revenue. |
 | [`herald-ios-appsflyer`](https://github.com/MkhytarMkhoian/herald-ios-appsflyer) | `HeraldAppsFlyer` | Sends to AppsFlyer: conversions, purchases, subscriptions and ad revenue. |
+| [`herald-ios-meta`](https://github.com/MkhytarMkhoian/herald-ios-meta) | `HeraldMeta` | Sends to Meta: conversions and purchases, for Meta's ads. |
 <!-- --8<-- [end:packages] -->
 
 ## Compatibility
@@ -101,6 +102,7 @@ tested against these vendor SDKs:
 | `Amplitude-Swift` | 1.12 or newer |
 | Adjust | 5 |
 | AppsFlyer | 7 |
+| Meta (`facebook-ios-sdk`) | 18 |
 
 Each vendor package allows newer versions of its SDK within the same major version. A new major
 version of an SDK may need a Herald release.

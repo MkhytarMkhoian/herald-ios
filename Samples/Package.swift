@@ -16,12 +16,14 @@ let package = Package(
         .package(path: "../../herald-ios-amplitude"),
         .package(path: "../../herald-ios-adjust"),
         .package(path: "../../herald-ios-appsflyer"),
+        .package(path: "../../herald-ios-meta"),
         // The vendor SDKs, for the samples that call them directly.
         .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "12.0.0"),
         .package(url: "https://github.com/mixpanel/mixpanel-swift", from: "6.0.0"),
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.12.0"),
         .package(url: "https://github.com/adjust/ios_sdk", from: "5.0.0"),
         .package(url: "https://github.com/AppsFlyerSDK/AppsFlyerFramework", from: "7.0.0"),
+        .package(url: "https://github.com/facebook/facebook-ios-sdk", "18.1.1"..<"19.0.0"),
     ],
     targets: [
         .target(
@@ -35,12 +37,14 @@ let package = Package(
                 .product(name: "HeraldAmplitude", package: "herald-ios-amplitude"),
                 .product(name: "HeraldAdjust", package: "herald-ios-adjust"),
                 .product(name: "HeraldAppsFlyer", package: "herald-ios-appsflyer"),
+                .product(name: "HeraldMeta", package: "herald-ios-meta"),
                 .product(name: "FirebaseCore", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk"),
                 .product(name: "Mixpanel", package: "mixpanel-swift"),
                 .product(name: "AmplitudeSwift", package: "Amplitude-Swift"),
                 .product(name: "AdjustSdk", package: "ios_sdk"),
                 .product(name: "AppsFlyerLib", package: "AppsFlyerFramework"),
+                .product(name: "FacebookCore", package: "facebook-ios-sdk"),
             ]
         ),
         .testTarget(

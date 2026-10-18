@@ -1,7 +1,14 @@
 # Change Log
 
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
-and the five vendor packages.
+and the six vendor packages.
+
+## Version 1.3.0
+
+_Not released yet_
+
+ * New: `herald-ios-meta`, module `HeraldMeta`, sends events to Meta's App Events, over Meta's iOS
+   SDK 18: conversions under Meta's standard names, and purchases through `MetaPurchaseEvent`.
 
 ## Version 1.2.0
 
