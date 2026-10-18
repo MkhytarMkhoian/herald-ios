@@ -3,8 +3,6 @@
   <img alt="Herald" src="https://raw.githubusercontent.com/MkhytarMkhoian/herald/main/docs/assets/readme-banner-light.png">
 </picture>
 
-> *A herald announces an event to whoever is listening.*
-
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-website-indigo.svg)](https://mkhytarmkhoian.github.io/herald-docs/)
 [![Swift versions](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2FMkhytarMkhoian%2Fherald-ios%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/MkhytarMkhoian/herald-ios)
