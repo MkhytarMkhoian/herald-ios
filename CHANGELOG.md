@@ -5,7 +5,7 @@ and the six vendor packages.
 
 ## Version 1.3.0
 
-_Not released yet_
+_2026-10-18_
 
  * New: `herald-ios-meta`, module `HeraldMeta`, sends events to Meta's App Events, over Meta's iOS
    SDK 18: conversions under Meta's standard names, and purchases through `MetaPurchaseEvent`.
