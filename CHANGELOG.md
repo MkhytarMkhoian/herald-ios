@@ -3,6 +3,14 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the six vendor packages.
 
+## Unreleased
+
+_Unreleased_
+
+ * Upgrade: `herald-ios-firebase` needs Firebase's iOS SDK 13, which needs Xcode 26.2 or newer.
+ * Upgrade: `herald-ios-mixpanel` needs Mixpanel's iOS SDK 7. If your app also uses Mixpanel's
+   Session Replay 1.x, move it to a version that works with `MixpanelSwiftCommon` 2.
+
 ## Version 1.4.0
 
 _2026-11-02_

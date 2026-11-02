@@ -18,8 +18,8 @@ let package = Package(
         .package(path: "../../herald-ios-appsflyer"),
         .package(path: "../../herald-ios-meta"),
         // The vendor SDKs, for the samples that call them directly.
-        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "12.0.0"),
-        .package(url: "https://github.com/mixpanel/mixpanel-swift", from: "6.0.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "13.0.0"),
+        .package(url: "https://github.com/mixpanel/mixpanel-swift", from: "7.0.0"),
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.12.0"),
         .package(url: "https://github.com/adjust/ios_sdk", from: "5.0.0"),
         .package(url: "https://github.com/AppsFlyerSDK/AppsFlyerFramework", from: "7.0.0"),

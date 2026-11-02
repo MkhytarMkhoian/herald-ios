@@ -95,8 +95,8 @@ tested against these vendor SDKs:
 
 | SDK | Version |
 | --- | --- |
-| Firebase | 12 |
-| `mixpanel-swift` | 6 |
+| Firebase | 13 |
+| `mixpanel-swift` | 7 |
 | `Amplitude-Swift` | 1.12 or newer |
 | Adjust | 5 |
 | AppsFlyer | 7 |
