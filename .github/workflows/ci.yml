@@ -16,7 +16,7 @@ jobs:
   test:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Formatting
         run: swift format lint --strict -r Sources Tests Samples/Sources Samples/Tests Example Package.swift
@@ -33,7 +33,7 @@ jobs:
   api:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # the tags, to find the latest release
 
@@ -43,7 +43,7 @@ jobs:
   example:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Build and test the example app
         run: |
@@ -54,7 +54,7 @@ jobs:
   samples:
     runs-on: macos-26
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       # The samples use every vendor package, found next to this repository, as on a developer's
       # machine.
