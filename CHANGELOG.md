@@ -3,9 +3,9 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the six vendor packages.
 
-## Unreleased
+## Version 1.4.0
 
-_Unreleased_
+_2026-11-02_
 
  * Breaking: `herald-ios-meta` needs Meta's iOS SDK 19, up from 18, now that Meta has fixed the
    SwiftPM checksums of 19.0.0. Meta 19 is where the two settings below first appear.
