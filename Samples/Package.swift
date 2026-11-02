@@ -23,7 +23,7 @@ let package = Package(
         .package(url: "https://github.com/amplitude/Amplitude-Swift", from: "1.12.0"),
         .package(url: "https://github.com/adjust/ios_sdk", from: "5.0.0"),
         .package(url: "https://github.com/AppsFlyerSDK/AppsFlyerFramework", from: "7.0.0"),
-        .package(url: "https://github.com/facebook/facebook-ios-sdk", "18.1.1"..<"19.0.0"),
+        .package(url: "https://github.com/facebook/facebook-ios-sdk", from: "19.0.0"),
     ],
     targets: [
         .target(

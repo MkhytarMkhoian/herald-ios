@@ -3,6 +3,17 @@
 All Herald for iOS packages share one version, and this change log covers them all: `herald-ios`
 and the six vendor packages.
 
+## Unreleased
+
+_Unreleased_
+
+ * Breaking: `herald-ios-meta` needs Meta's iOS SDK 19, up from 18, now that Meta has fixed the
+   SwiftPM checksums of 19.0.0. Meta 19 is where the two settings below first appear.
+ * Fix: `MetaAnalyticsService.setEnabled` also turns off what Meta 19 collects by itself: the
+   screen title and app link URL it adds to events, and its product improvement data. For a fresh
+   install to collect nothing before consent, also set `FBSDKAutoLogMetaDataEnabled` and
+   `FBSDKAutoLogProductImprovementEnabled` to `NO` in `Info.plist`.
+
 ## Version 1.3.0
 
 _2026-10-18_

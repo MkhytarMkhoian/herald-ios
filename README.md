@@ -100,7 +100,7 @@ tested against these vendor SDKs:
 | `Amplitude-Swift` | 1.12 or newer |
 | Adjust | 5 |
 | AppsFlyer | 7 |
-| Meta (`facebook-ios-sdk`) | 18 |
+| Meta (`facebook-ios-sdk`) | 19 |
 
 Each vendor package allows newer versions of its SDK within the same major version. A new major
 version of an SDK may need a Herald release.
